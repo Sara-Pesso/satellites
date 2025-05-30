@@ -236,10 +236,10 @@ if __name__ == '__main__':
     el_resp_label.grid(row=18, column=1)
 
 
-    # ### adding in the map!!
-    # def _quit():
-    #     root.quit()
-    #     root.destroy()
-    # root.protocol("WM_DELETE_WINDOW", _quit)
-    # app=Application(root, master=root)
+    ### adding in the map!!
+    def _quit():
+        root.quit()
+        root.destroy()
+    root.protocol("WM_DELETE_WINDOW", _quit)
+    app=Application(root, master=root)
     root.mainloop()

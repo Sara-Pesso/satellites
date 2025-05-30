@@ -37,11 +37,11 @@ class Application(tk.Frame):
 
         # plt.show()
         canvas=FigureCanvasTkAgg(fig,master=root)
-        canvas.get_tk_widget().grid(row=0,column=1)
+        canvas.get_tk_widget().grid(row=19,column=1)
         canvas.draw()
 
         self.plotbutton=tk.Button(master=root, text="plot", command=lambda: self.plot(canvas,ax))
-        self.plotbutton.grid(row=0,column=0)
+        self.plotbutton.grid(row=19,column=0)
 
     def plot(self,canvas,ax):
         c = ['r','b','g']  # plot marker colors
