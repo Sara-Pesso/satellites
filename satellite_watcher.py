@@ -145,7 +145,76 @@ def geometry_calc():
     el_resp_label.config(text=str(el))
 
     print("Calculations complete!")
+
+def view_window():
+    ## Grab satellite norad id
+    satellite = satellite_dropdown.get()
+    norad_id = satcat_dict[satellite]['NORAD_CAT_ID']
+    print("Selected satellite: " + satellite + ", " + "NORAD ID: " + norad_id)
+    ##grab satellite tle
+    tle = fetch_tle_from_celestrak(norad_id)
+    ## Parse date/time info
+    sdate = sdate_box.get()
+    stime = stime_box.get()
+    edate = edate_box.get()
+    etime = etime_box.get()
+
+    ts = load.timescale()
     
+    syear, smonth, sday, shour, sminute, ssecond = int(sdate[0:4]),int(sdate[4:6]),int(sdate[6:]), int(stime[0:2]),int(stime[2:4]), int(stime[4:])
+    eyear, emonth, eday, ehour, eminute, esecond = int(edate[0:4]),int(edate[4:6]),int(edate[6:]), int(etime[0:2]),int(etime[2:4]), int(etime[4:])
+
+    sdatetime = ts.utc(syear, smonth, sday, shour, sminute, ssecond)
+    edatetime = ts.utc(eyear, emonth, eday, ehour, eminute, esecond)
+
+    total_interval = round((edatetime-sdatetime)*24*60*60)
+
+    ##Skyfield satellite object
+    sat_obj = EarthSatellite(tle[1], tle[2], satellite_dropdown.get(), ts)
+
+    geometry_info_dict = {}
+    for s in range(0,total_interval, int(iter_box.get())): #from 0 (start interval) - end of interval, iterating by x sec.
+        ## Satellite position at interval time s
+        position = sat_obj.at(ts.utc(syear, smonth, sday, shour, sminute, ssecond+s))
+        ecef = position.itrf_xyz()##ECEF = Earth centered, Earth frame
+
+        ## Grab the ECEF Cartesian coordinates from the satellite's propagator
+        xs, ys, zs = ecef.km[0], ecef.km[1], ecef.km[2]
+        ## Convert to spherical (lat/lon) coordinates
+        rs = sqrt(xs**2 + ys**2 + zs**2) ## wrt Earth's center
+        lat_s = 90 - acos(zs/rs)*(180/pi)
+        lon_s = atan2(ys,xs)*180/pi
+        alt_s = rs - re
+        result = str(lat_s)+", "+ str(lon_s)+", "+ str(alt_s)
+        print("Satellite LLA: "+ result)
+
+        ## Calculate the view angle (address-to-satellite view angle; azimuth/elevation)
+        # get the address ECEF coords
+        LLAa = address_latlon_resp_label.cget("text")
+        lat_a, lon_a = LLAa.split(", ") #degrees !
+        lat_a, lon_a = float(lat_a), float(lon_a)
+
+        ## check that the user can actually see the satellite!
+        LOS, lambda_0a, lambda_0s, lambda_, phia, phis, thetaa, thetas, range_, ela, aza = LOS_geometry(lat_a,lon_a,0, lat_s,lon_s,alt_s) ##address assumed alt = 0 km
+    
+        ## Look angle calcs
+        az = aza*180/pi
+        el = ela*180/pi  ## convert to degrees
+
+        geometry_info_dict[s] = (LOS, lambda_0a, lambda_0s, lambda_, phia, phis, thetaa, thetas, range_, ela, aza)
+
+        if s == 0: #only display for time 0 (for now! TODO: make it so the first time info the satellite is visible during the user defined interval is displayed)
+            satellite_latlon_resp_label.config(text=result)
+            ## LOS
+            LOS_resp_label.config(text=str(LOS))
+            ## range to satellite
+            range_resp_label.config(text=str(range_))
+            ## Viewing az
+            az_resp_label.config(text=str(az))
+            ## viewing el
+            el_resp_label.config(text=str(el))
+
+        print("Calculations complete!")
 
 ## Main loop
 if __name__ == '__main__':
@@ -202,7 +271,7 @@ if __name__ == '__main__':
     tk.Label(root, text = "Enter Time Step (seconds):").grid(row = 7)
     iter_box = tk.Entry()
     iter_box.grid(row = 7, column = 1)
-    iter_button = tk.Button(root, text = "Set End Date", command = iter_func)
+    iter_button = tk.Button(root, text = "Set Time Step", command = iter_func)
     iter_button.grid(row = 7, column = 2)
 
     ## ---------- SET USER RESPONSES -------------------------------------------
@@ -254,7 +323,7 @@ if __name__ == '__main__':
 
     ## ------------- DISPLAY APP OUTPUTS ------------------------------------------
     ## Calculate button
-    calculate_button = tk.Button(root, text="Calculate Az/El", command=geometry_calc)
+    calculate_button = tk.Button(root, text="Calculate Az/El", command=view_window)
     calculate_button.grid(row=16, column=1)
 
     ## section title
@@ -350,4 +419,4 @@ anim = FuncAnimation(fig, animate, init_func = init,
                      frames = 200, interval = 20, blit = True)
 
  
-plt.show()
+# plt.show()
