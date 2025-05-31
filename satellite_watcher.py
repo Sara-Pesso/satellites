@@ -13,6 +13,7 @@ from geopy.geocoders import Nominatim
 from satellite_tle import fetch_tle_from_celestrak
 from skyfield.api import load, EarthSatellite
 from geometry import *
+# from gis import *
 
 re = 6378 # km; radius of Earth (assuming spherical Earth)
 
@@ -173,6 +174,7 @@ def view_window():
     sat_obj = EarthSatellite(tle[1], tle[2], satellite_dropdown.get(), ts)
 
     geometry_info_dict = {}
+    satellite_position_dict = {}
     for s in range(0,total_interval, int(iter_box.get())): #from 0 (start interval) - end of interval, iterating by x sec.
         ## Satellite position at interval time s
         position = sat_obj.at(ts.utc(syear, smonth, sday, shour, sminute, ssecond+s))
@@ -188,6 +190,9 @@ def view_window():
         result = str(lat_s)+", "+ str(lon_s)+", "+ str(alt_s)
         print("Satellite LLA: "+ result)
 
+        satellite_position_dict[s] = (lat_s,lon_s,alt_s,xs,ys,zs)
+        print(satellite_position_dict)
+
         ## Calculate the view angle (address-to-satellite view angle; azimuth/elevation)
         # get the address ECEF coords
         LLAa = address_latlon_resp_label.cget("text")
@@ -202,6 +207,7 @@ def view_window():
         el = ela*180/pi  ## convert to degrees
 
         geometry_info_dict[s] = (LOS, lambda_0a, lambda_0s, lambda_, phia, phis, thetaa, thetas, range_, ela, aza)
+        print(geometry_info_dict)
 
         if s == 0: #only display for time 0 (for now! TODO: make it so the first time info the satellite is visible during the user defined interval is displayed)
             satellite_latlon_resp_label.config(text=result)
@@ -215,6 +221,9 @@ def view_window():
             el_resp_label.config(text=str(el))
 
         print("Calculations complete!")
+        #TODO: if s(0) LOS==true, working backwards to find the true start of the view window
+        #TODO: if (s(e)) LOS==true, continue iterating to find true end of the view window
+        #TODO: maybe remove end date/time user input? Just find the closest view window to the give date/time
 
 ## Main loop
 if __name__ == '__main__':
@@ -370,53 +379,3 @@ if __name__ == '__main__':
     # root.protocol("WM_DELETE_WINDOW", _quit)
     # app=GISMap(root, master=root)
     root.mainloop()
-
-
-
-
-################### Visualization! #################################
-#map projection for plot
-data = ep.data.get_data('spatial-vector-lidar')
-worldBound_path = os.path.join(ep.io.HOME, 'earth-analytics', "data", "spatial-vector-lidar", "global", 
-                               "ne_110m_land", "ne_110m_land.shp")
-worldBound = gp.read_file(worldBound_path)
-
-# Plot worldBound data using geopandas
-fig, ax = plt.subplots(figsize=(10, 5))
-worldBound.plot(color='darkgrey', 
-                ax=ax)
-# Set the x and y axis labels
-ax.set(xlabel="Longitude (Degrees)",
-    ylabel="Latitude (Degrees)",
-    title="Global Map - Geographic Coordinate System - WGS84 Datum\n Units: Degrees - Latitude / Longitude")
-
-# Add the x y graticules
-ax.set_axisbelow(True)
-ax.yaxis.grid(color='gray', 
-            linestyle='dashed')
-ax.xaxis.grid(color='gray', 
-            linestyle='dashed')
-
-# initializing a line variable
-line, = ax.plot([], [], lw = 3) 
- 
-# data which the line will 
-# contain (x, y)
-def init(): 
-    line.set_data([], [])
-    return line,
- 
-def animate(i):
-    x = np.linspace(0, 4, 1000)
- 
-    # plots a sine graph
-    y = np.sin(2 * np.pi * (x - 0.01 * i))
-    line.set_data(x, y)
-    
-    return line,
- 
-anim = FuncAnimation(fig, animate, init_func = init,
-                     frames = 200, interval = 20, blit = True)
-
- 
-# plt.show()
