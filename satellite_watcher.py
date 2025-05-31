@@ -33,12 +33,27 @@ def address_func():
 def stime_func():
     stime_input = stime_box.get()
     stime_resp_label.config(text = str(stime_input))
-    print("Time set!")
+    print("Start Time set!")
 
 def sdate_func():
     sdate_input = sdate_box.get()
     sdatetime_resp_label.config(text = str(sdate_input))
-    print("Date set!")
+    print("Start Date set!")
+
+def etime_func():
+    etime_input = etime_box.get()
+    etime_resp_label.config(text = str(etime_input))
+    print("End Time set!")
+
+def edate_func():
+    edate_input = edate_box.get()
+    edatetime_resp_label.config(text = str(edate_input))
+    print("End Date set!")
+
+def iter_func():
+    iter_input = iter_box.get()
+    iter_resp_label.config(text = str(iter_input))
+    print("Time Step (s) set!")
 
 ## Create a dictionary with Celestrak Satellite catalogue info (downloaded as csv from: https://celestrak.org/satcat/search.php)
 satcat_dict = {}
@@ -170,100 +185,113 @@ if __name__ == '__main__':
     sdate_button.grid(row = 4, column = 2)
 
     ##Select End Time (Entry/Text)
-    tk.Label(root, text = "Enter End Time (HHMMSS [24-HR]):").grid(row = 3)
+    tk.Label(root, text = "Enter End Time (HHMMSS [24-HR]):").grid(row = 5)
     etime_box = tk.Entry()
-    etime_box.grid(row = 3, column = 1)
+    etime_box.grid(row = 5, column = 1)
     etime_button = tk.Button(root, text = "Set End Time", command = etime_func)
-    etime_button.grid(row = 3, column = 2)
+    etime_button.grid(row = 5, column = 2)
 
     ##Select End Date (Entry)
-    tk.Label(root, text = "Enter End Date (YYYYMMDD):").grid(row = 4)
+    tk.Label(root, text = "Enter End Date (YYYYMMDD):").grid(row = 6)
     edate_box = tk.Entry()
-    edate_box.grid(row = 4, column = 1)
+    edate_box.grid(row = 6, column = 1)
     edate_button = tk.Button(root, text = "Set End Date", command = edate_func)
-    edate_button.grid(row = 4, column = 2)
+    edate_button.grid(row = 6, column = 2)
+
+    ##Select Time Step (s) (Entry/Text)
+    tk.Label(root, text = "Enter Time Step (seconds):").grid(row = 7)
+    iter_box = tk.Entry()
+    iter_box.grid(row = 7, column = 1)
+    iter_button = tk.Button(root, text = "Set End Date", command = iter_func)
+    iter_button.grid(row = 7, column = 2)
 
     ## ---------- SET USER RESPONSES -------------------------------------------
     ## section tile
     responses_label = tk.Label(root, text = "Your Entries...")
-    responses_label.grid(row = 5)
+    responses_label.grid(row = 8)
 
     ## Address
     address_label = tk.Label(root, text = "Address:")
-    address_label.grid(row = 6, column=0)
+    address_label.grid(row = 9, column=0)
     address_resp_label = tk.Label(root, text = "")
-    address_resp_label.grid(row = 6, column=1)
+    address_resp_label.grid(row = 9, column=1)
 
     ## satellite
     satellite_label = tk.Label(root, text = "Satellite:")
-    satellite_label.grid(row = 7, column=0)
+    satellite_label.grid(row = 10, column=0)
     satellite_resp_label = tk.Label(root, text = "")
-    satellite_resp_label.grid(row = 7, column=1)
+    satellite_resp_label.grid(row = 10, column=1)
 
     ##start date
     sdatetime_label = tk.Label(root, text = "Start Date:")
-    sdatetime_label.grid(row = 8, column=0)
+    sdatetime_label.grid(row = 11, column=0)
     sdatetime_resp_label = tk.Label(root, text = "")
-    sdatetime_resp_label.grid(row = 8, column=1)
+    sdatetime_resp_label.grid(row = 11, column=1)
 
     ##start time
     stime_label = tk.Label(root, text = "Start Time:")
-    stime_label.grid(row = 9, column=0)
+    stime_label.grid(row = 12, column=0)
     stime_resp_label = tk.Label(root, text = "")
-    stime_resp_label.grid(row = 9, column=1)
+    stime_resp_label.grid(row = 12, column=1)
 
     ##end date
     edatetime_label = tk.Label(root, text = "End Date:")
-    edatetime_label.grid(row = 10, column=0)
+    edatetime_label.grid(row = 13, column=0)
     edatetime_resp_label = tk.Label(root, text = "")
-    edatetime_resp_label.grid(row = 10, column=1)
+    edatetime_resp_label.grid(row = 13, column=1)
 
     ##end time
     etime_label = tk.Label(root, text = "End Time:")
-    etime_label.grid(row = 11, column=0)
+    etime_label.grid(row = 14, column=0)
     etime_resp_label = tk.Label(root, text = "")
-    etime_resp_label.grid(row = 11, column=1)
+    etime_resp_label.grid(row = 14, column=1)
+
+    ##time step (seconds)
+    iter_label = tk.Label(root, text = "Time Step (seconds):")
+    iter_label.grid(row = 15, column=0)
+    iter_resp_label = tk.Label(root, text = "")
+    iter_resp_label.grid(row = 15, column=1)
 
     ## ------------- DISPLAY APP OUTPUTS ------------------------------------------
     ## Calculate button
     calculate_button = tk.Button(root, text="Calculate Az/El", command=geometry_calc)
-    calculate_button.grid(row=12, column=1)
+    calculate_button.grid(row=16, column=1)
 
     ## section title
     responses_label = tk.Label(root, text = "Satellite Spotter's Results...")
-    responses_label.grid(row = 13)
+    responses_label.grid(row = 18)
 
     ## Address lat/lon/alt
     address_latlon_label = tk.Label(root, text = "Address Latitude, Longitude, Altitude (deg/km): ")
-    address_latlon_label.grid(row=14)
+    address_latlon_label.grid(row=19)
     address_latlon_resp_label = tk.Label(root, text= "")
-    address_latlon_resp_label.grid(row=14, column=1)
+    address_latlon_resp_label.grid(row=19, column=1)
     ##satellite lat/lon/alt
     satellite_latlon_label = tk.Label(root, text = "Satellite Latitude, Longitude, Altitude (deg/km): ")
-    satellite_latlon_label.grid(row=15)
+    satellite_latlon_label.grid(row=20)
     satellite_latlon_resp_label = tk.Label(root, text= "")
-    satellite_latlon_resp_label.grid(row=15, column=1)
+    satellite_latlon_resp_label.grid(row=20, column=1)
 
     ## LOS
     LOS_label = tk.Label(root, text= "Line-of-Sight to Satellite: ")
-    LOS_label.grid(row = 17)
+    LOS_label.grid(row = 21)
     LOS_resp_label = tk.Label(root, text= "")
-    LOS_resp_label.grid(row=17, column=1)
+    LOS_resp_label.grid(row=21, column=1)
     ## range to satellite
     range_label = tk.Label(root, text= "Distance to Satellite (km): ")
-    range_label.grid(row=18)
+    range_label.grid(row=22)
     range_resp_label = tk.Label(root, text="")
-    range_resp_label.grid(row=18, column=1)
+    range_resp_label.grid(row=22, column=1)
     ## Viewing az
     azimuth_label = tk.Label(root, text= "Viewing Azimuth (deg): ")
-    azimuth_label.grid(row=19)
+    azimuth_label.grid(row=23)
     az_resp_label = tk.Label(root, text="")
-    az_resp_label.grid(row=19, column=1)
+    az_resp_label.grid(row=23, column=1)
     ## viewing el
     elevation_label = tk.Label(root, text= "Viewing Elevation (deg): ")
-    elevation_label.grid(row=20)
+    elevation_label.grid(row=24)
     el_resp_label = tk.Label(root, text="")
-    el_resp_label.grid(row=20, column=1)
+    el_resp_label.grid(row=24, column=1)
 
 
     ### adding in the map!!
