@@ -13,7 +13,7 @@ worldBound_path = os.path.join(ep.io.HOME, 'earth-analytics', "data", "spatial-v
 worldBound = gp.read_file(worldBound_path)
 
 
-class Application(tk.Frame):
+class GISMap(tk.Frame):
     def __init__(self, root, master=None):
         tk.Frame.__init__(self,master)
         self.createWidgets(root)
@@ -37,11 +37,11 @@ class Application(tk.Frame):
 
         # plt.show()
         canvas=FigureCanvasTkAgg(fig,master=root)
-        canvas.get_tk_widget().grid(row=19,column=1)
+        canvas.get_tk_widget().grid(row=19, column=0, columnspan=3)
         canvas.draw()
 
-        self.plotbutton=tk.Button(master=root, text="plot", command=lambda: self.plot(canvas,ax))
-        self.plotbutton.grid(row=19,column=0)
+        # self.plotbutton=tk.Button(master=root, text="plot", command=lambda: self.plot(canvas,ax))
+        # self.plotbutton.grid(row=19,column=0)
 
     def plot(self,canvas,ax):
         c = ['r','b','g']  # plot marker colors
@@ -51,7 +51,20 @@ class Application(tk.Frame):
             r = np.random.uniform(0,1,10)
             ax.plot(theta,r,linestyle="None",marker='o', color=c[i])
             canvas.draw()
-    
+
+    # def viewingWindows(self, stime, etime, iter, sid, aid):
+    #     #stime = start date/time
+    #     #etime = end date/time
+    #     #iter = iterate by x secs
+    #     #sid = satellite id
+    #     #aid = address (id)
+    #     dur = etime-stime
+    #     for t in range(0,dur,iter):
+    #         jdate = f(stime, t)
+
+
+        return
+
         
 # if __name__ == '__main__':
 #     def _quit():
@@ -62,3 +75,21 @@ class Application(tk.Frame):
 #     root.protocol("WM_DELETE_WINDOW", _quit)
 #     app=Application(master=root)
 #     root.mainloop()
+
+# Plot worldBound data using geopandas
+fig, ax = plt.subplots(figsize=(10, 5))
+worldBound.plot(color='darkgrey', 
+                ax=ax)
+# Set the x and y axis labels
+ax.set(xlabel="Longitude (Degrees)",
+    ylabel="Latitude (Degrees)",
+    title="Global Map - Geographic Coordinate System - WGS84 Datum\n Units: Degrees - Latitude / Longitude")
+
+# Add the x y graticules
+ax.set_axisbelow(True)
+ax.yaxis.grid(color='gray', 
+            linestyle='dashed')
+ax.xaxis.grid(color='gray', 
+            linestyle='dashed')
+
+plt.show()

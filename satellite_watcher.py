@@ -1,3 +1,10 @@
+import earthpy as ep
+import geopandas as gp
+import os
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
+from matplotlib.animation import FuncAnimation
 import tkinter as tk
 from tkinter import ttk
 from csv import DictReader
@@ -5,12 +12,9 @@ from math import *
 from geopy.geocoders import Nominatim
 from satellite_tle import fetch_tle_from_celestrak
 from skyfield.api import load, EarthSatellite
-
 from geometry import *
-# from gis import *
 
 re = 6378 # km; radius of Earth (assuming spherical Earth)
-
 
 def address_func(): 
     ##"Set Address"
@@ -26,14 +30,14 @@ def address_func():
     address_latlon_resp_label.config(text = str(lat) +", "+ str(lon))
     print("Address set!")
 
-def time_func():
-    time_input = time_box.get()
-    time_resp_label.config(text = str(time_input))
+def stime_func():
+    stime_input = stime_box.get()
+    stime_resp_label.config(text = str(stime_input))
     print("Time set!")
 
-def date_func():
-    date_input = date_box.get()
-    datetime_resp_label.config(text = str(date_input))
+def sdate_func():
+    sdate_input = sdate_box.get()
+    sdatetime_resp_label.config(text = str(sdate_input))
     print("Date set!")
 
 ## Create a dictionary with Celestrak Satellite catalogue info (downloaded as csv from: https://celestrak.org/satcat/search.php)
@@ -76,11 +80,11 @@ def geometry_calc():
     ##grab satellite tle
     tle = fetch_tle_from_celestrak(norad_id)
     ## Parse date/time info
-    date = date_box.get()
-    time = time_box.get()
+    sdate = sdate_box.get()
+    stime = stime_box.get()
 
     ts = load.timescale()
-    year, month, day, hour, minute, second = int(date[0:4]),int(date[4:6]),int(date[6:]), int(time[0:2]),int(time[2:4]), int(time[4:])
+    year, month, day, hour, minute, second = int(sdate[0:4]),int(sdate[4:6]),int(sdate[6:]), int(stime[0:2]),int(stime[2:4]), int(stime[4:])
     print(year, month, day, hour, minute, second)
     datetime = ts.utc(year, month, day, hour, minute, second)
 
@@ -151,19 +155,33 @@ if __name__ == '__main__':
     satellite_button = tk.Button(root, text= "Set Satellite", command = set_satellite)
     satellite_button.grid(row=2, column=2)
 
-    ##Select Time (Entry/Text)
-    tk.Label(root, text = "Enter Time (HHMMSS [24-HR]):").grid(row = 3)
-    time_box = tk.Entry()
-    time_box.grid(row = 3, column = 1)
-    time_button = tk.Button(root, text = "Set Time", command = time_func)
-    time_button.grid(row = 3, column = 2)
+    ##Select Start Time (Entry/Text)
+    tk.Label(root, text = "Enter Start Time (HHMMSS [24-HR]):").grid(row = 3)
+    stime_box = tk.Entry()
+    stime_box.grid(row = 3, column = 1)
+    stime_button = tk.Button(root, text = "Set Start Time", command = stime_func)
+    stime_button.grid(row = 3, column = 2)
 
-    ##Select Date (Entry)
-    tk.Label(root, text = "Enter Date (YYYYMMDD):").grid(row = 4)
-    date_box = tk.Entry()
-    date_box.grid(row = 4, column = 1)
-    date_button = tk.Button(root, text = "Set Date", command = date_func)
-    date_button.grid(row = 4, column = 2)
+    ##Select Start Date (Entry)
+    tk.Label(root, text = "Enter Start Date (YYYYMMDD):").grid(row = 4)
+    sdate_box = tk.Entry()
+    sdate_box.grid(row = 4, column = 1)
+    sdate_button = tk.Button(root, text = "Set Start Date", command = sdate_func)
+    sdate_button.grid(row = 4, column = 2)
+
+    ##Select End Time (Entry/Text)
+    tk.Label(root, text = "Enter End Time (HHMMSS [24-HR]):").grid(row = 3)
+    etime_box = tk.Entry()
+    etime_box.grid(row = 3, column = 1)
+    etime_button = tk.Button(root, text = "Set End Time", command = etime_func)
+    etime_button.grid(row = 3, column = 2)
+
+    ##Select End Date (Entry)
+    tk.Label(root, text = "Enter End Date (YYYYMMDD):").grid(row = 4)
+    edate_box = tk.Entry()
+    edate_box.grid(row = 4, column = 1)
+    edate_button = tk.Button(root, text = "Set End Date", command = edate_func)
+    edate_button.grid(row = 4, column = 2)
 
     ## ---------- SET USER RESPONSES -------------------------------------------
     ## section tile
@@ -182,58 +200,70 @@ if __name__ == '__main__':
     satellite_resp_label = tk.Label(root, text = "")
     satellite_resp_label.grid(row = 7, column=1)
 
-    ##date
-    datetime_label = tk.Label(root, text = "Date:")
-    datetime_label.grid(row = 8, column=0)
-    datetime_resp_label = tk.Label(root, text = "")
-    datetime_resp_label.grid(row = 8, column=1)
+    ##start date
+    sdatetime_label = tk.Label(root, text = "Start Date:")
+    sdatetime_label.grid(row = 8, column=0)
+    sdatetime_resp_label = tk.Label(root, text = "")
+    sdatetime_resp_label.grid(row = 8, column=1)
 
-    ##time
-    time_label = tk.Label(root, text = "Time:")
-    time_label.grid(row = 9, column=0)
-    time_resp_label = tk.Label(root, text = "")
-    time_resp_label.grid(row = 9, column=1)
+    ##start time
+    stime_label = tk.Label(root, text = "Start Time:")
+    stime_label.grid(row = 9, column=0)
+    stime_resp_label = tk.Label(root, text = "")
+    stime_resp_label.grid(row = 9, column=1)
+
+    ##end date
+    edatetime_label = tk.Label(root, text = "End Date:")
+    edatetime_label.grid(row = 10, column=0)
+    edatetime_resp_label = tk.Label(root, text = "")
+    edatetime_resp_label.grid(row = 10, column=1)
+
+    ##end time
+    etime_label = tk.Label(root, text = "End Time:")
+    etime_label.grid(row = 11, column=0)
+    etime_resp_label = tk.Label(root, text = "")
+    etime_resp_label.grid(row = 11, column=1)
 
     ## ------------- DISPLAY APP OUTPUTS ------------------------------------------
     ## Calculate button
     calculate_button = tk.Button(root, text="Calculate Az/El", command=geometry_calc)
-    calculate_button.grid(row=10, column=1)
+    calculate_button.grid(row=12, column=1)
 
     ## section title
     responses_label = tk.Label(root, text = "Satellite Spotter's Results...")
-    responses_label.grid(row = 11)
+    responses_label.grid(row = 13)
 
     ## Address lat/lon/alt
     address_latlon_label = tk.Label(root, text = "Address Latitude, Longitude, Altitude (deg/km): ")
-    address_latlon_label.grid(row=12)
+    address_latlon_label.grid(row=14)
     address_latlon_resp_label = tk.Label(root, text= "")
-    address_latlon_resp_label.grid(row=12, column=1)
+    address_latlon_resp_label.grid(row=14, column=1)
     ##satellite lat/lon/alt
     satellite_latlon_label = tk.Label(root, text = "Satellite Latitude, Longitude, Altitude (deg/km): ")
-    satellite_latlon_label.grid(row=13)
+    satellite_latlon_label.grid(row=15)
     satellite_latlon_resp_label = tk.Label(root, text= "")
-    satellite_latlon_resp_label.grid(row=13, column=1)
+    satellite_latlon_resp_label.grid(row=15, column=1)
 
     ## LOS
     LOS_label = tk.Label(root, text= "Line-of-Sight to Satellite: ")
-    LOS_label.grid(row = 15)
+    LOS_label.grid(row = 17)
     LOS_resp_label = tk.Label(root, text= "")
-    LOS_resp_label.grid(row=15, column=1)
+    LOS_resp_label.grid(row=17, column=1)
     ## range to satellite
     range_label = tk.Label(root, text= "Distance to Satellite (km): ")
-    range_label.grid(row=16)
+    range_label.grid(row=18)
     range_resp_label = tk.Label(root, text="")
-    range_resp_label.grid(row=16, column=1)
+    range_resp_label.grid(row=18, column=1)
     ## Viewing az
     azimuth_label = tk.Label(root, text= "Viewing Azimuth (deg): ")
-    azimuth_label.grid(row=17)
+    azimuth_label.grid(row=19)
     az_resp_label = tk.Label(root, text="")
-    az_resp_label.grid(row=17, column=1)
+    az_resp_label.grid(row=19, column=1)
     ## viewing el
     elevation_label = tk.Label(root, text= "Viewing Elevation (deg): ")
-    elevation_label.grid(row=18)
+    elevation_label.grid(row=20)
     el_resp_label = tk.Label(root, text="")
-    el_resp_label.grid(row=18, column=1)
+    el_resp_label.grid(row=20, column=1)
 
 
     ### adding in the map!!
@@ -243,3 +273,53 @@ if __name__ == '__main__':
     # root.protocol("WM_DELETE_WINDOW", _quit)
     # app=GISMap(root, master=root)
     root.mainloop()
+
+
+
+
+################### Visualization! #################################
+#map projection for plot
+data = ep.data.get_data('spatial-vector-lidar')
+worldBound_path = os.path.join(ep.io.HOME, 'earth-analytics', "data", "spatial-vector-lidar", "global", 
+                               "ne_110m_land", "ne_110m_land.shp")
+worldBound = gp.read_file(worldBound_path)
+
+# Plot worldBound data using geopandas
+fig, ax = plt.subplots(figsize=(10, 5))
+worldBound.plot(color='darkgrey', 
+                ax=ax)
+# Set the x and y axis labels
+ax.set(xlabel="Longitude (Degrees)",
+    ylabel="Latitude (Degrees)",
+    title="Global Map - Geographic Coordinate System - WGS84 Datum\n Units: Degrees - Latitude / Longitude")
+
+# Add the x y graticules
+ax.set_axisbelow(True)
+ax.yaxis.grid(color='gray', 
+            linestyle='dashed')
+ax.xaxis.grid(color='gray', 
+            linestyle='dashed')
+
+# initializing a line variable
+line, = ax.plot([], [], lw = 3) 
+ 
+# data which the line will 
+# contain (x, y)
+def init(): 
+    line.set_data([], [])
+    return line,
+ 
+def animate(i):
+    x = np.linspace(0, 4, 1000)
+ 
+    # plots a sine graph
+    y = np.sin(2 * np.pi * (x - 0.01 * i))
+    line.set_data(x, y)
+    
+    return line,
+ 
+anim = FuncAnimation(fig, animate, init_func = init,
+                     frames = 200, interval = 20, blit = True)
+
+ 
+plt.show()
