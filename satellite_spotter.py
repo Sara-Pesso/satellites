@@ -11,7 +11,6 @@ from geometry import *
 
 re = 6378 # km; radius of Earth (assuming spherical Earth)
 
-
 def address_func(): 
     ##"Set Address"
     ##(1) print the text entry by the address_label

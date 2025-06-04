@@ -373,9 +373,5 @@ if __name__ == '__main__':
 
 
     ### adding in the map!!
-    # def _quit():
-    #     root.quit()
-    #     root.destroy()
-    # root.protocol("WM_DELETE_WINDOW", _quit)
-    # app=GISMap(root, master=root)
+    
     root.mainloop()
