@@ -7,7 +7,7 @@ from satellite_tle import fetch_tle_from_celestrak
 from skyfield.api import load, EarthSatellite
 
 from geometry import *
-# from gis import *
+from gis import *
 
 re = 6378 # km; radius of Earth (assuming spherical Earth)
 
@@ -18,10 +18,19 @@ def address_func():
     address_resp_label.config(text = address_input)
     print("Address: " + address_input)
     ##(2)  find that addresses lat/lon, print by address_latlon_label
-    geolocator = Nominatim(user_agent="my_user_agent")
-    loc = geolocator.geocode(address_input)
-    print("Latitude: " ,loc.latitude,"\nLongtitude: " ,loc.longitude)
-    lat, lon = loc.latitude, loc.longitude
+    try: 
+        geolocator = Nominatim(user_agent="my_user_agent")
+        loc = geolocator.geocode(address_input)
+        print("Latitude: " ,loc.latitude,"\nLongtitude: " ,loc.longitude)
+        lat, lon = loc.latitude, loc.longitude
+        print("Used GeoPy for address LLA")
+    except:
+        clean_str = address_input.rstrip()
+        zipcode = clean_str[-5:]
+        LL = ZipcodeLLA('us', zipcode)
+        lat,lon = LL['lat'], LL['lon']
+        print("Used Zipcode for LLA")
+
     address_latlon_resp_label.config(text = str(lat) +", "+ str(lon))
     print("Address set!")
 

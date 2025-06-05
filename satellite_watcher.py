@@ -13,7 +13,7 @@ from geopy.geocoders import Nominatim
 from satellite_tle import fetch_tle_from_celestrak
 from skyfield.api import load, EarthSatellite
 from geometry import *
-# from gis import *
+from gis import *
 
 re = 6378 # km; radius of Earth (assuming spherical Earth)
 
@@ -24,10 +24,19 @@ def address_func():
     address_resp_label.config(text = address_input)
     print("Address: " + address_input)
     ##(2)  find that addresses lat/lon, print by address_latlon_label
-    geolocator = Nominatim(user_agent="my_user_agent")
-    loc = geolocator.geocode(address_input)
-    print("Latitude: " ,loc.latitude,"\nLongtitude: " ,loc.longitude)
-    lat, lon = loc.latitude, loc.longitude
+    try: 
+        geolocator = Nominatim(user_agent="my_user_agent")
+        loc = geolocator.geocode(address_input)
+        print("Latitude: " ,loc.latitude,"\nLongtitude: " ,loc.longitude)
+        lat, lon = loc.latitude, loc.longitude
+        print("Used GeoPy for address LLA")
+    except:
+        clean_str = address_input.rstrip()
+        zipcode = clean_str[-5:]
+        LL = ZipcodeLLA('us', zipcode)
+        lat,lon = LL['lat'], LL['lon']
+        print("Used Zipcode for LLA")
+
     address_latlon_resp_label.config(text = str(lat) +", "+ str(lon))
     print("Address set!")
 
@@ -224,7 +233,9 @@ def view_window():
         #TODO: if s(0) LOS==true, working backwards to find the true start of the view window
         #TODO: if (s(e)) LOS==true, continue iterating to find true end of the view window
         #TODO: maybe remove end date/time user input? Just find the closest view window to the give date/time
-
+    
+    ### adding in the map to tkinter gui!!
+    SatelliteAnimation(satellite_position_dict, lat_a, lon_a)
 ## Main loop
 if __name__ == '__main__':
     root = tk.Tk()
@@ -370,8 +381,5 @@ if __name__ == '__main__':
     elevation_label.grid(row=24)
     el_resp_label = tk.Label(root, text="")
     el_resp_label.grid(row=24, column=1)
-
-
-    ### adding in the map!!
     
     root.mainloop()

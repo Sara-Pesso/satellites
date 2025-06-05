@@ -3,8 +3,8 @@ import geopandas as gp
 import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-# import tkinter as tk  
-# import numpy as np
+# import tkinter as tk 
+import numpy as np
 from matplotlib.animation import FuncAnimation
 
 
@@ -17,7 +17,7 @@ from matplotlib.animation import FuncAnimation
 ################### Visualization! #################################
 
 
-def SatelliteAnimation(root, satellite_position_dict, lata, lona):
+def SatelliteAnimation(satellite_position_dict, lata, lona):
     #map projection for plot
     data = ep.data.get_data('spatial-vector-lidar')
     worldBound_path = os.path.join(ep.io.HOME, 'earth-analytics', "data", "spatial-vector-lidar", "global", 
@@ -70,12 +70,13 @@ def SatelliteAnimation(root, satellite_position_dict, lata, lona):
         satellite_flight.set_data(slon, slat)
         return satellite_flight, 
 
-    canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().grid(column=0,row=1)
+    # canvas = FigureCanvasTkAgg(fig, master=root)
+    # canvas.get_tk_widget().grid(column=0,row=row)
     ani = FuncAnimation(fig, update, frames=max(list(satellite_position_dict.keys()))+1, init_func=init_plot, interval=25, blit=False)
-    return ani
+    plt.show()
+    # return ani
 
-
+# SatelliteAnimation(satellite_position_dict, lata, lona)
 
 # if __name__ == '__main__':
 #     def _quit():
@@ -85,7 +86,25 @@ def SatelliteAnimation(root, satellite_position_dict, lata, lona):
 #     root=tk.Tk()
 #     root.protocol("WM_DELETE_WINDOW", _quit)
 #     label = tk.Label(root,text="SHM Simulation").grid(column=0, row=0)
-#     k = SatelliteAnimation(root, satellite_position_dict, lata, lona)
+#     k = SatelliteAnimation(root, satellite_position_dict, lata, lona,row=1)
     
 #     root.mainloop()
 
+
+#################################################################
+import pgeocode
+
+def ZipcodeLLA(country, zip):
+    nomi = pgeocode.Nominatim(str(country))
+    query = nomi.query_postal_code(str(zip))
+    nomi.query_location
+    LLA = {
+        "lat": query["latitude"],
+        "lon": query["longitude"]
+    }
+    return LLA
+# print(data)
+# address_input = "6594 esmont rd keene va 22946 "
+# clean_str = address_input.rstrip()
+# zipcode = clean_str[-5:]
+# print(zipcode)
