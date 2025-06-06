@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # import tkinter as tk 
 import numpy as np
 from matplotlib.animation import FuncAnimation
+from math import *
 
 
 ################### data from satellite_watcher ###############################
@@ -17,7 +18,7 @@ from matplotlib.animation import FuncAnimation
 ################### Visualization! #################################
 
 
-def SatelliteAnimation(satellite_position_dict, lata, lona):
+def SatelliteAnimation(geo_dict, satellite_position_dict, lata, lona, time_step):
     #map projection for plot
     data = ep.data.get_data('spatial-vector-lidar')
     worldBound_path = os.path.join(ep.io.HOME, 'earth-analytics', "data", "spatial-vector-lidar", "global", 
@@ -54,25 +55,37 @@ def SatelliteAnimation(satellite_position_dict, lata, lona):
     ax.xaxis.grid(color='gray', 
                 linestyle='dashed')
 
-    satellite_flight, = ax.plot([], [], 'ro')
-    address, = ax.plot([lona], [lata], 'bo')
+    satellite_los, = ax.plot([], [], 'go')
+    satellite_blos, = ax.plot([], [], 'ro')
+    address, = ax.plot([lona], [lata], 'ko')
 
-    slat = []
-    slon = []
+    los_lat = []
+    los_lon = []
+    blos_lat = []
+    blos_lon = []
 
     def init_plot():
-        satellite_flight.set_data([],[])
-        return satellite_flight,
+        satellite_los.set_data([],[])
+        satellite_blos.set_data([],[])
+        return satellite_los, satellite_blos,
 
     def update(frame):
-        slat.append(satellite_position_dict[frame][0])
-        slon.append(satellite_position_dict[frame][1])
-        satellite_flight.set_data(slon, slat)
-        return satellite_flight, 
+        slat, slon = satellite_position_dict[frame][0], satellite_position_dict[frame][1]
+        LOS = geo_dict[frame][0]
+        # print(LOS)
+        if LOS is True:
+            los_lat.append(satellite_position_dict[frame][0])
+            los_lon.append(satellite_position_dict[frame][1])
+            satellite_los.set_data(los_lon, los_lat)
+        else:
+            blos_lat.append(satellite_position_dict[frame][0])
+            blos_lon.append(satellite_position_dict[frame][1])
+            satellite_blos.set_data(blos_lon, blos_lat)
+        return satellite_los, satellite_blos
 
     # canvas = FigureCanvasTkAgg(fig, master=root)
     # canvas.get_tk_widget().grid(column=0,row=row)
-    ani = FuncAnimation(fig, update, frames=max(list(satellite_position_dict.keys()))+1, init_func=init_plot, interval=25, blit=False)
+    ani = FuncAnimation(fig, update, frames=max(list(satellite_position_dict.keys()))+1, init_func=init_plot, interval=int(time_step), blit=False)
     plt.show()
     # return ani
 

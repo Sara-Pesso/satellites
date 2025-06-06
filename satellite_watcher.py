@@ -200,7 +200,7 @@ def view_window():
         print("Satellite LLA: "+ result)
 
         satellite_position_dict[s] = (lat_s,lon_s,alt_s,xs,ys,zs)
-        print(satellite_position_dict)
+        # print(satellite_position_dict)
 
         ## Calculate the view angle (address-to-satellite view angle; azimuth/elevation)
         # get the address ECEF coords
@@ -216,7 +216,7 @@ def view_window():
         el = ela*180/pi  ## convert to degrees
 
         geometry_info_dict[s] = (LOS, lambda_0a, lambda_0s, lambda_, phia, phis, thetaa, thetas, range_, ela, aza)
-        print(geometry_info_dict)
+        # print(geometry_info_dict)
 
         if s == 0: #only display for time 0 (for now! TODO: make it so the first time info the satellite is visible during the user defined interval is displayed)
             satellite_latlon_resp_label.config(text=result)
@@ -235,14 +235,14 @@ def view_window():
         #TODO: maybe remove end date/time user input? Just find the closest view window to the give date/time
     
     ### adding in the map to tkinter gui!!
-    SatelliteAnimation(satellite_position_dict, lat_a, lon_a)
+    SatelliteAnimation(geometry_info_dict, satellite_position_dict, lat_a, lon_a, time_step=iter_box.get())
 ## Main loop
 if __name__ == '__main__':
     root = tk.Tk()
-    root.title("Satellite Spotter!")
+    root.title("Satellite Watcher!")
     
     ## Title
-    tk.Label(root, text = "Satellite Spotter!").grid(row = 0)
+    tk.Label(root, text = "Satellite Watcher!").grid(row = 0)
 
     ## -------- USER INPUTS -----------------------------------
     ##Address text input (Entry/Text)
@@ -347,7 +347,7 @@ if __name__ == '__main__':
     calculate_button.grid(row=16, column=1)
 
     ## section title
-    responses_label = tk.Label(root, text = "Satellite Spotter's Results...")
+    responses_label = tk.Label(root, text = "Satellite Watcher's Results...")
     responses_label.grid(row = 18)
 
     ## Address lat/lon/alt
