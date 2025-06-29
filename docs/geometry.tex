@@ -190,7 +190,7 @@ viewer this is still true, but North and East are defined as the plane parallel 
 the platform's SPP, contianing the platform.) "Up" is the axis orthogonal to the North-East plane, which in the case
 just happens to be \textbf{zenith} (recall the zenith (the opposite of nadir) is the vector coming from the Earth's 
 center, toward the platform).
-\subsection*{Azimuth & Elevation.}
+\subsection*{Azimuth \& Elevation.}
 Now that we have an understanding of the local ENU coordinate system for a platform, we can discuss the definitons
 of the viewing angles in the direction of another platform. The \textbf{azimuth} is the rotational angle,
 within the North-East plane; that is the angle off of North, in the direction fo East. The \textbf{elevation} angle 
@@ -216,6 +216,57 @@ From the diagram we observe the following (this has more meaning for Earth-bound
     \end{tabular}
 \end{center}
 \subsection*{Az-El Calculation Method \#1: From Local Polar Coordinate Frame.}
+\subsubsection*{Calculating Range.}
+(1) Given that there is LOS to the airborne platform, we can first calculate the distance, $D$,
+between the two platforms, called the \textbf{range}. This is trivial, given we have the ECEF coordinates of the two platforms. Let 
+$$\Delta x = x_1-x_2$$
+$$\Delta y = y_1-y_2$$
+$$\Delta z = z_1-z_2$$
+
+$$D = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}$$
+\\\\
+(2) Alternatively, we can calculate the range using angles we have already found using the following computation:
+$$D = \frac{(r_e+alt_2)\sin\lambda}{\sin\theta_1}$$
+
+\subsubsection*{Elevation Angle.}
+Next, we can take advantage of the trigonometry of the scenario, we can leverage the Law
+if Sines to find the angles between each platform and the center of Earth. For either 
+platform. Recall that $\lambda$ is the inner-Earth angle between the platforms:
+
+$$\sin\theta = \frac{(r_e+\text{alt})\sin\lambda}{D}$$
+
+which we can use to solve for $\theta$. \\
+Observe that in the platform-centric reference frames, $\theta$ and $el$ are compliments of each other 
+in a right-angle. 
+\\\\
+% add diagram of complimenting theta and el here
+\\\\
+Therefore, we can simply find $el$
+$$el = \frac{\pi}{2} - \theta$$
+
+Now, this does require a bit more logic. We need figure out the proper sign $(+/-)$ of our angles. This 
+indicates if each platform is looking above or below their respective local horizons' (ENU coordinate system)
+at the other platform. 
+\\\\
+% add diagram of K1 and K2 values here... illustrative of this logic 
+\\\\
+From the diagram above, we can now see that if 
+$r_e + \text{alt} < K$
+then, $el = |el|$, and if $r_e + \text{alt} > K$, then $el = |el|$. In the (very unlikely) case that
+$r_e + \text{alt} = K$ precisely, then it must be the case that $el = 0$. 
+
+\subsubsection*{Azimuth.}
+Once again taking advantage of the Spherical Law of Cosines, we can find
+
+$$\cos\phi_1 = \frac{\sin lat_2 - \cos\lambda \sin lat_1}{\sin\lambda\cos lat_1}$$
+$$\cos\phi_2 = \frac{\sin lat_1 - \cos\lambda \sin lat_2}{\sin\lambda\cos lat_2}$$
+
+Again, we need to account for the sign $(+/-)$ of the azimuth. Note that on Earth, $-180^{\circ}$
+and $180^{\circ}$ are the same place, but approached from either east or west. So,
+if $\text{lon}_1 < \text{lon}_2$, then $\phi_1 = |\phi_1|$ and $\phi_2 = -|\phi_2|$. And, if 
+$\text{lon}_1 > \text{lon}_2$, 
+then $\phi_1 = -|\phi_1|$ and $\phi_2 = |\phi_2|$. In the (very unlikely) case that
+$\text{lon}_1 = \text{lon}_2$ precisely, the azimuths are $0^{\circ}$ and $180^{\circ}$, respectively.
 
 \subsection{Az-El Calculation Method \#2: Rotation from ECEF Coordinate Frame.}
 
