@@ -272,6 +272,62 @@ $\text{lon}_1 = \text{lon}_2$ precisely, the azimuths are $0^{\circ}$ and $180^{
 There is a more elegant way to calculate the azimuth and elevation angles from one platform
 to the other, going directly from ECEF to ENU, and simply taking into account the rotational orientation
 of each platform (w.r.t the other) in the form of matrices. \\\\
-In ECEF, the
+In ECEF, each platform can be represented by the vector $(x,y,z)^\text{T}$. Then, we can account for the rotation
+from one coordinate axis to the other using the shift (rotation) matrices. We will need two rotatoins to convert from ECEF to 
+ENU coordinates. In order those are:
 
+\begin{enumerate}
+  \item A clockwise rotation from Earth's east-axis by $90-\text{lat}$ to align with
+  the up-axis in ENU. 
+  \item  A clockwise rotation about the z-axis by $90+$lon to align the east-axis with the x-axis
+\end{enumerate}
+
+The transfomraiotn between terrestrial frames can be defined as follow:
+
+$$R_1[\alpha] = \begin{bmatrix}
+  1&0&0\\
+  0&\cos\alpha&\sin\alpha\\
+  0&-\sin\alpha&\cos\alpha
+\end{bmatrix}, R_2[\alpha] =\begin{bmatrix}
+  \cos\alpha&0&-\sin\theta\\
+  0&1&0\\
+  \sin\alpha&0&\cos\alpha
+\end{bmatrix}, R_3[\alpha] = \begin{bmatrix}
+  \cos\alpha&\sin\alpha&0\\
+  -\sin\alpha&\cos\alpha&0\\
+  0&0&1
+\end{bmatrix}$$
+
+So, we can write the needed transformations in mtrix notation as
+
+$$R_1[-(\frac{\pi}{2}-\text{lat})]$$
+$$R_3[-(\frac{\pi}{2}+\text{lon})]$$
+
+and 
+
+$$R_3[-(\frac{\pi}{2}+\text{lon})]R_1[-(\frac{\pi}{2}-\text{lat})] = \begin{bmatrix}
+  -\sin\text{lon}&-\cos\text{lon}\sin\text{lat}&\cos\text{lon}\sin\text{lat}\\
+  \cos\text{lon}&-\sin\text{lon}\sin\text{lat}&\sin\text{lon}\cos\text{lat}\\
+  0&\cos\text{lat}&\sin\text{lat}
+\end{bmatrix}$$
+
+The unit vectors for east, north, and up in ENU, expressed using the platforms LLA is therefore
+
+$$\hat{\textbf{e}} = (-\sin\text{lon}, \cos\text{lon})$$
+$$\hat{\textbf{n}} = (-\cos\text{lon}\sin\text{lat}, -\sin\text{lon}\sin\text{lat}, \cos\text{lat})$$
+$$\hat{\textbf{u}} = (\cos\text{lon}\cos\text{lat}, \sin\text{lon}\cos\text{lat}, \sin\text{lat})$$
+
+In order to convert the ENU vectors to azimuth and elevation, we simply take the LOS vector, given by the ECEF 
+coordinates of each platform. That is
+
+$$\hat{\textbf{L}} = \frac{\begin{bmatrix}x_1\\y_1\\z_1\end{bmatrix}-\begin{bmatrix}x_2\\y_2\\z_2\end{bmatrix}}{||\begin{bmatrix}x_1\\y_1\\z_1\end{bmatrix}-\begin{bmatrix}x_2\\y_2\\z_2\end{bmatrix}||}$$
+
+Now, we can see that the azimuth and elevation in th elocal ENU system are given by
+
+$$\hat{\textbf{L}}\cdot\hat{\textbf{e}} = \cos(el)\sin(az)$$
+$$\hat{\textbf{L}}\cdot\hat{\textbf{n}} = \cos(el)\cos(az)$$
+$$\hat{\textbf{L}}\cdot\hat{\textbf{u}} = \sin(el)$$
+or
+$$el = \sin^{-1}(\hat{\textbf{L}} \cdot \hat{\textbf{u}})$$
+$$az = \tan^{-1}\biggl(\frac{\hat{\textbf{L}}\cdot\hat{\textbf{e}}}{\hat{\textbf{L}}\cdot\hat{\textbf{n}}}\biggr)$$
 \end{document}
