@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{ecef2enu}
+J.M. Juan~Zornoza J.~Sanz~Subirana and M.~Hernández-Pajares.
+\newblock Transformations between ecef and enu coordinates, 2011.
+
+\bibitem{transBtwTerFrames}
+J.M. Juan~Zornoza J.~Sanz~Subirana and M.~Hernández-Pajares.
+\newblock Transformations between ecef and enu coordinates, 2011.
+
+\bibitem{SLOC}
+Stony~Brook University.
+\newblock Spherical trigonometry and navigation, 2006.
+
+\bibitem{wertz_space_2005}
+James~Richard Wertz and Wiley~J. Larson, editors.
+\newblock {\em Space {Mission} {Analysis} and {Design}}.
+\newblock Kluwer, El Segundo, 3 edition, 2005.
+\newblock Original Date: 1999.
+
+\end{thebibliography}

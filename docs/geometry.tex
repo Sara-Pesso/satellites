@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx}
 \usepackage{lipsum}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -30,7 +30,7 @@
       \includegraphics[scale=0.4]{Earth_Centered_Inertial_Coordinate_System}
       \caption{Earth-center, Earth-fixed reference frame (ECEF).}
       \label{fig:sub1}
-    \end{subfigure}%
+    \end{subfigure}
     \begin{subfigure}{.5\textwidth}
       \centering
       \includegraphics[scale=0.15]{polarSystem.PNG} 
@@ -39,7 +39,7 @@
     \end{subfigure}
     \caption{Comparison of the ECEF and Polar reference frames.}
     \label{fig:test}
-    \end{figure}
+\end{figure}
 
 In Figure 1 (a) of the \textbf{ECEF} reference frame, the $z^+$-axis is the North Pole, 
 $x^+$ passes through the intersection of
@@ -85,25 +85,40 @@ SPP. For our purposes, the directionality of the $y$-axis is ambiguous.
 \section*{Line of Sight (LOS)}
 First, in order to determine if two platforms have LOS, we need to calculate
 the $\lambda_0$ (the angular region of Earth) seen by each platform. 
-\\\\
-%insert image here
-\\\\
+\begin{figure}
+      \centering
+      \includegraphics[scale=0.75]{geometry1.PNG}
+      \caption{Illustration of the relationship between $\lambda_{01}, \lambda_{02}$ 
+      and $\lambda$}      
+      \label{fig:fig2}
+\end{figure}
 Clearly, we can see that $\lambda_0$ for eahc platform is given by
 $$\lambda_{01} = \frac{r_e}{r_e+alt_1}$$
 $$\lambda_{02} = \frac{r_e}{r_e+alt_2}$$
-Note that for a platform of the Earth's surface, $\lambda_0 = 0$.
+Note that for a platform of the Earth's surface, $\lambda_0 = 0$. \\
 Then we need to find $\lambda$, which is the inner-Earth angle between
 the platforms. We can complish this by leveraging the Spherical Law of
-Cosines, which states %add spherical law of cosines here
-\\\\
-% add image of SLOCs here
-\\\\
+Cosines, which states
+
+$$\cos \text{c} = \cos \text{a}\cos\text{b} +\sin\text{a}\sin\text{b}\cos\text{C}$$
+
+in a situation analogous to Figure \ref{fig:fig3} \cite{SLOC}.
+
+\begin{figure}
+      \centering
+      \includegraphics[scale=0.5]{geometry2.png}
+      \caption{The Spherical Law of Cosines.}      
+      \label{fig:fig3}
+\end{figure}
 In the case of platforms on or orbiting Earth, we can leverage this
 by looking at the latitude and longitude of the SPPs. These projections
 will have the same angular relationships as the platforms themselves. So,
-\\\\
-% add LOS image here
-\\\\
+\begin{figure}
+      \centering
+      \includegraphics[scale=0.5]{geo10.PNG}
+      \caption{Illustration of the relationship of orbital angles, as they relate to the Spherical Law of Cosines.}      
+      \label{fig:fig4}
+\end{figure}
 The Spherical Law of Cosines becomes
 
 $$\cos\lambda = \cos\theta_1\cos\theta_2 + \sin\theta_1\sin\theta_2\cos(|\phi_1-\phi_2|)$$
@@ -125,17 +140,34 @@ Another factor in LOS is elevation, $\epsilon$, of the line-of-sight above Earth
 to be confused with the local \textbf{azimuth and elevation} "look" angles, which we will discuss later!)
 Many communication systems have a minimum elevation angle at which they can reliably
 operate. 
-\\\\
-% add image of elevation, rho, eta 
-\\\\
+\begin{figure}
+    \centering
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{rho_eta_lambdas.png}
+      \caption{Platform on surface of Earth.}
+      \label{fig:sub6}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[scale=0.5]{rho_eta_lambdas2.png} 
+      \caption{Platform above surface of Earth.}
+      \label{fig:sub7}
+    \end{subfigure}
+    \caption{Geometry of $\rho, \eta,$ and $\epsilon$ (i.e., elevation above local horizon.)}
+    \label{fig:test2}
+\end{figure}
 With respect to (w.r.t) platform (1), we see that $\rho$ and $\lambda_0$ are related by
 $$\cos\lambda_0 = \sin\rho = \frac{r_e}{r_e + alt_1}$$
 (Note: if we were calculating w.r.t platform (2), we would use $alt_2$ instead of $alt_1$ in this calculation.)\\
 We can calculate $\eta$ as follows:
-\\\\
-% add image of 2 airborne platforms, calculating eta
-\\\\
-We can see from this configuration that
+\begin{figure}
+      \centering
+      \includegraphics[scale=0.5]{geometry8.PNG}
+      \caption{Illustration of the relationship of orbital angles, as they relate to the Spherical Law of Cosines.}      
+      \label{fig:fig5}
+\end{figure}
+We can see from the configuration in Figure 5 that
 $$\sin\lambda = \frac{a}{r_e + alt_2} \implies a = (r_e + alt_2)\sin\lambda$$
 $$\cos\lambda = \frac{b}{r_e + alt_2} \implies b = (r_e + alt_2)\cos\lambda$$
 $$(r_e+r_1)-b = (r_e+r_1)-(r_e + alt_2)\cos\lambda$$
@@ -153,14 +185,13 @@ $$\sin\eta_2 = \frac{(re+alt_1)\sin\lambda}{D}$$
 $$\eta_2 = 180^{\circ}-\lambda-\eta_1$$
 We can calculate $D$ using the ECEF coordinates of each platforms:
 $$D = \sqrt{(x_1-x_2)^2+(y_1-y_2)^2+(z_1-z_2)^2}$$
-From the diagram, we can tell that we have 2 cases. \\
-\\\\
-% add diagrams of the 2 cases here
-\\\\
-(1) if $\rho > \epsilon$ (i.e., for a platform on Earth's surface),
-$$\epsilon = 90^{\circ} - (\eta + \lambda)$$
-or, (2)if $\eta \geq \rho$ (i.e., for 2 airborne platforms),
-$$\epsilon = \rho - \eta$$
+From the Figures 5(a) and 5(b), we can tell that we have 2 cases. \\
+\fbox{\parbox{8cm}{\centering (1) if $\rho > \epsilon$ (i.e., for a platform on Earth's surface),
+$$\epsilon = 90^{\circ} - (\eta + \lambda)$$ 
+or, \\ (2)if $\eta \geq \rho$ (i.e., for 2 airborne platforms), 
+$$\epsilon = \rho - \eta$$}}
+
+
 \subsection*{More on LOS}
 Observe that we can derive the following relationships between $\eta, \lambda,$ and $\epsilon$ from the 
 above diagram
@@ -196,9 +227,12 @@ of the viewing angles in the direction of another platform. The \textbf{azimuth}
 within the North-East plane; that is the angle off of North, in the direction fo East. The \textbf{elevation} angle 
 (sometimes calle the "altitude angle") is then the angle measured "up" off the North-East plane (in the direction
 of the Up-axis, to be clear).
-\\\\
-% add diagrams of the 2 cases here
-\\\\
+\begin{figure}
+      \centering
+      \includegraphics[scale=0.5]{Transf_ECEF_&_ENU_Coord_Fig_1.png}
+      \caption{Azimuth \& Elevation coordinate frame \cite{ecef2enu}.}      
+      \label{fig:fig5}
+\end{figure}
 From the diagram we observe the following (this has more meaning for Earth-bound platforms, but it is true regardless):
 \begin{center}
     \begin{tabular}{|c c|} 
@@ -237,10 +271,7 @@ $$\sin\theta = \frac{(r_e+\text{alt})\sin\lambda}{D}$$
 
 which we can use to solve for $\theta$. \\
 Observe that in the platform-centric reference frames, $\theta$ and $el$ are compliments of each other 
-in a right-angle. 
-\\\\
-% add diagram of complimenting theta and el here
-\\\\
+in a right-angle, as seen in Figure 7.
 Therefore, we can simply find $el$
 $$el = \frac{\pi}{2} - \theta$$
 
@@ -311,14 +342,14 @@ $$R_3[-(\frac{\pi}{2}+\text{lon})]R_1[-(\frac{\pi}{2}-\text{lat})] = \begin{bmat
   0&\cos\text{lat}&\sin\text{lat}
 \end{bmatrix}$$
 
-The unit vectors for east, north, and up in ENU, expressed using the platforms LLA is therefore
+The unit vectors for east, north, and up in ENU coordinates, expressed using the platforms LLA is therefore
 
 $$\hat{\textbf{e}} = (-\sin\text{lon}, \cos\text{lon})$$
 $$\hat{\textbf{n}} = (-\cos\text{lon}\sin\text{lat}, -\sin\text{lon}\sin\text{lat}, \cos\text{lat})$$
 $$\hat{\textbf{u}} = (\cos\text{lon}\cos\text{lat}, \sin\text{lon}\cos\text{lat}, \sin\text{lat})$$
 
 In order to convert the ENU vectors to azimuth and elevation, we simply take the LOS vector, given by the ECEF 
-coordinates of each platform. That is
+coordinates of each platform \cite{wertz_space_2005} \cite{ecef2enu} \cite{transBtwTerFrames}. That is
 
 $$\hat{\textbf{L}} = \frac{\begin{bmatrix}x_1\\y_1\\z_1\end{bmatrix}-\begin{bmatrix}x_2\\y_2\\z_2\end{bmatrix}}{||\begin{bmatrix}x_1\\y_1\\z_1\end{bmatrix}-\begin{bmatrix}x_2\\y_2\\z_2\end{bmatrix}||}$$
 
@@ -330,4 +361,7 @@ $$\hat{\textbf{L}}\cdot\hat{\textbf{u}} = \sin(el)$$
 or
 $$el = \sin^{-1}(\hat{\textbf{L}} \cdot \hat{\textbf{u}})$$
 $$az = \tan^{-1}\biggl(\frac{\hat{\textbf{L}}\cdot\hat{\textbf{e}}}{\hat{\textbf{L}}\cdot\hat{\textbf{n}}}\biggr)$$
+
+\bibliographystyle{plain}
+\bibliography{bibliography.bib}
 \end{document}
